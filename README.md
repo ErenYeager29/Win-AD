@@ -4,6 +4,11 @@ A comprehensive Claude skill covering Windows Active Directory penetration testi
 
 **Scope**: Windows AD only. Azure AD / Entra ID and Linux pivoting are intentionally out of scope — separate skills.
 
+[![Cert Coverage](https://img.shields.io/badge/cert--coverage-interactive-1f6feb?style=flat-square&logo=target&logoColor=white)](./cert-coverage.html)
+[![Phases](https://img.shields.io/badge/phases-18-3fb950?style=flat-square)](./README.md#coverage--18-reference-files)
+[![Lines](https://img.shields.io/badge/lines-4%2C575-d29922?style=flat-square)](./README.md)
+[![Scope](https://img.shields.io/badge/scope-Windows%20AD%20only-f85149?style=flat-square)](./README.md)
+
 ---
 
 <!-- CERT COVERAGE BANNER -->
