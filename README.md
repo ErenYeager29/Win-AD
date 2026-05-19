@@ -6,6 +6,183 @@ A comprehensive Claude skill covering Windows Active Directory penetration testi
 
 ---
 
+<!-- CERT COVERAGE BANNER -->
+<div id="cert-banner" style="font-family:system-ui,sans-serif;margin:0 0 2rem;">
+
+<p style="font-size:13px;color:#6e7681;margin:0 0 10px;">Click a certification to see topic-by-topic coverage</p>
+
+<div id="cert-cards" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin-bottom:14px;"></div>
+
+<div id="cert-detail" style="display:none;border:1px solid #30363d;border-radius:10px;padding:16px;background:#0d1117;"></div>
+
+<style>
+.cc{background:#0d1117;border:1px solid #30363d;border-radius:8px;padding:12px;cursor:pointer;transition:border-color .15s}
+.cc:hover{border-color:#58a6ff}
+.cc.sel{border:2px solid #1f6feb}
+.cn{font-size:14px;font-weight:600;color:#e6edf3;margin-bottom:2px}
+.co{font-size:11px;color:#8b949e;margin-bottom:8px}
+.bw{background:#21262d;border-radius:3px;height:6px;overflow:hidden}
+.bf{height:100%;border-radius:3px;transition:width .4s}
+.pl{font-size:11px;color:#8b949e;margin-top:4px;text-align:right}
+.dh{display:flex;align-items:center;gap:10px;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid #30363d}
+.dt{font-size:15px;font-weight:600;color:#e6edf3}
+.ds{font-size:12px;color:#8b949e;margin-top:2px}
+.bp{font-size:26px;font-weight:600;margin-left:auto}
+.tr{display:flex;align-items:center;gap:8px;font-size:12px;padding:6px 8px;border-radius:6px;background:#161b22;margin-bottom:4px}
+.tn{flex:1;color:#c9d1d9}
+.tp{font-size:11px;color:#8b949e;min-width:70px}
+.b{font-size:10px;padding:2px 7px;border-radius:10px;font-weight:600;white-space:nowrap}
+.bf2{background:#1a3d1f;color:#3fb950}
+.bp2{background:#3d2e0a;color:#d29922}
+.bt{background:#0c2d6b;color:#58a6ff}
+.bg{background:#3d0f0f;color:#f85149}
+.vd{margin-top:10px;padding:8px 12px;border-radius:6px;background:#161b22;font-size:12px;color:#c9d1d9;border-left:3px solid}
+.lg{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;padding-top:8px;border-top:1px solid #21262d}
+.li{display:flex;align-items:center;gap:4px;font-size:11px;color:#8b949e}
+</style>
+
+<script>
+(function(){
+const certs=[
+  {id:'oscp',name:'OSCP',org:'OffSec',color:'#f85149',
+   focus:'Practical exploitation — AD chain mandatory in exam since 2022',
+   verdict:'Excellent. Every topic on the OSCP AD module is covered in depth. The skill goes well beyond OSCP scope.',vc:'#3fb950',
+   topics:[
+    {n:'AD enumeration (BloodHound, PowerView)',p:'Phase 03',c:'full'},
+    {n:'Password spraying + lockout policy check',p:'Phase 02',c:'full'},
+    {n:'Kerberoasting + AS-REP Roasting',p:'Phase 04',c:'full'},
+    {n:'Pass-the-Hash / Pass-the-Ticket',p:'Phase 05',c:'full'},
+    {n:'PsExec, WMI, Evil-WinRM lateral move',p:'Phase 05',c:'full'},
+    {n:'ACL abuse (GenericAll, WriteDACL)',p:'Phase 06',c:'full'},
+    {n:'DCSync + secretsdump',p:'Phase 07',c:'full'},
+    {n:'NTLM relay (Responder + ntlmrelayx)',p:'Phase 04',c:'full'},
+    {n:'Report writing — findings + remediation',p:'Phase 12',c:'full'},
+    {n:'Evasion basics (AV, AMSI)',p:'Phase 11',c:'partial'},
+  ]},
+  {id:'pnpt',name:'PNPT',org:'TCM Security',color:'#58a6ff',
+   focus:'Heavy AD focus — practical exam on a full AD environment',
+   verdict:'Excellent. PNPT is heavily AD-focused and every exam topic is covered. Skill also covers advanced topics well beyond PNPT scope.',vc:'#3fb950',
+   topics:[
+    {n:'LLMNR/NBT-NS poisoning (Responder)',p:'Phase 02',c:'full'},
+    {n:'Password spraying (kerbrute, nxc)',p:'Phase 02',c:'full'},
+    {n:'BloodHound + attack path analysis',p:'Phase 03',c:'full'},
+    {n:'Kerberoasting + AS-REP Roasting',p:'Phase 04',c:'full'},
+    {n:'Token impersonation',p:'Phase 05',c:'partial'},
+    {n:'GPP / cpassword (MS14-025)',p:'Phase 04',c:'full'},
+    {n:'Golden Ticket + persistence',p:'Phases 07–08',c:'full'},
+    {n:'Report writing + executive summary',p:'Phase 12',c:'full'},
+    {n:'OSINT + external recon',p:'Phase 01',c:'full'},
+  ]},
+  {id:'crto',name:'CRTO',org:'Zero-Point Security',color:'#3fb950',
+   focus:'Red team ops with Cobalt Strike — C2, evasion, OPSEC discipline',
+   verdict:'Very good. Strong on AD attacks. Thin on C2 operation and pivoting — CRTO relies heavily on Cobalt Strike tradecraft which is out of scope here.',vc:'#d29922',
+   topics:[
+    {n:'Full enumeration chain (LDAP, BloodHound)',p:'Phase 03',c:'full'},
+    {n:'Delegation attacks (RBCD, unconstrained)',p:'Phase 06',c:'full'},
+    {n:'DPAPI + credential theft',p:'Phase 15',c:'full'},
+    {n:'GPO abuse',p:'Phase 06',c:'full'},
+    {n:'Forest trust attacks',p:'Phase 09',c:'full'},
+    {n:'Persistence (AdminSDHolder, DSRM, etc.)',p:'Phase 08',c:'full'},
+    {n:'OPSEC discipline + evasion',p:'Phase 11',c:'partial'},
+    {n:'C2 framework operation (Cobalt Strike)',p:'Phase 11',c:'thin'},
+    {n:'Pivoting / port forwarding',p:'—',c:'gap'},
+  ]},
+  {id:'crte',name:'CRTE',org:'Altered Security',color:'#d29922',
+   focus:'Pure multi-domain AD attacks — the deepest AD-specific cert',
+   verdict:'Excellent for Windows AD topics. The only gap is Azure AD hybrid attacks — CRTE covers on-prem ↔ cloud chains which are explicitly out of this skill\'s scope.',vc:'#3fb950',
+   topics:[
+    {n:'Full ACL exploitation chain',p:'Phase 06',c:'full'},
+    {n:'All three delegation types',p:'Phase 06',c:'full'},
+    {n:'Child → parent escalation (SID History)',p:'Phase 09',c:'full'},
+    {n:'MSSQL lateral movement',p:'Phase 14',c:'full'},
+    {n:'AD CS (ESC1–ESC16)',p:'Phase 10',c:'full'},
+    {n:'gMSA + sMSA abuse',p:'Phase 16',c:'full'},
+    {n:'Diamond / Sapphire Tickets',p:'Phase 13',c:'full'},
+    {n:'ADIDNS / wpad abuse',p:'Phase 16',c:'full'},
+    {n:'Advanced Kerberos (noPac, KrbRelay)',p:'Phase 13',c:'full'},
+    {n:'Azure AD / Entra ID hybrid attacks',p:'—',c:'gap'},
+  ]},
+  {id:'ejpt',name:'eJPT',org:'eLearnSecurity',color:'#8b5cf6',
+   focus:'Entry-level — basic pentesting including light AD exposure',
+   verdict:'More than enough. eJPT barely touches AD. The skill covers everything eJPT needs and vastly more. Only gap is Metasploit-specific modules (out of scope).',vc:'#3fb950',
+   topics:[
+    {n:'Network discovery + port scanning',p:'Phase 03',c:'full'},
+    {n:'SMB enumeration + null sessions',p:'Phase 03',c:'full'},
+    {n:'Basic credential attacks',p:'Phase 04',c:'full'},
+    {n:'Simple lateral movement (PsExec)',p:'Phase 05',c:'full'},
+    {n:'Basic report writing',p:'Phase 12',c:'full'},
+    {n:'Metasploit usage',p:'—',c:'gap'},
+  ]},
+  {id:'osep',name:'OSEP',org:'OffSec',color:'#f0883e',
+   focus:'Advanced evasion, process injection, C2 development, AD at scale',
+   verdict:'Good for the AD portions. OSEP is an advanced evasion cert — it goes deeper on shellcode, loader dev, and C2 internals than this skill covers. Use as AD supplement.',vc:'#d29922',
+   topics:[
+    {n:'Process injection primitives',p:'Phase 11',c:'partial'},
+    {n:'AMSI/ETW bypass depth',p:'Phase 11',c:'partial'},
+    {n:'Custom C2 / shellcode loaders',p:'Phase 11',c:'thin'},
+    {n:'AD at scale (large env techniques)',p:'Phases 03–09',c:'full'},
+    {n:'SCCM + WSUS attacks',p:'Phase 17',c:'full'},
+    {n:'Phishing + initial access tradecraft',p:'Phase 02',c:'partial'},
+    {n:'Linux + macOS pivoting',p:'—',c:'gap'},
+    {n:'Antivirus bypass development',p:'Phase 11',c:'thin'},
+  ]},
+];
+
+const W={full:1,partial:.6,thin:.3,gap:0};
+function pct(t){return Math.round(t.reduce((s,x)=>s+W[x.c],0)/t.length*100)}
+function barCol(p){return p>=85?'#3fb950':p>=65?'#d29922':'#f85149'}
+function bClass(c){return{full:'bf2',partial:'bp2',thin:'bt',gap:'bg'}[c]}
+function bLabel(c){return{full:'Covered',partial:'Partial',thin:'Thin',gap:'Gap'}[c]}
+
+let sel=null;
+
+function renderCards(){
+  document.getElementById('cert-cards').innerHTML=certs.map(c=>{
+    const p=pct(c.topics);
+    return `<div class="cc${sel===c.id?' sel':''}" onclick="selCert('${c.id}')">
+      <div class="cn">${c.name}</div>
+      <div class="co">${c.org}</div>
+      <div class="bw"><div class="bf" style="width:${p}%;background:${barCol(p)}"></div></div>
+      <div class="pl">${p}% covered</div>
+    </div>`;
+  }).join('');
+}
+
+window.selCert=function(id){
+  sel=id; renderCards();
+  const c=certs.find(x=>x.id===id);
+  const p=pct(c.topics);
+  const d=document.getElementById('cert-detail');
+  d.style.display='block';
+  d.innerHTML=`
+    <div class="dh">
+      <div><div class="dt">${c.name} — ${c.org}</div><div class="ds">${c.focus}</div></div>
+      <div class="bp" style="color:${barCol(p)}">${p}%</div>
+    </div>
+    ${c.topics.map(t=>`
+      <div class="tr">
+        <div class="tn">${t.n}</div>
+        <div class="tp">${t.p}</div>
+        <span class="b ${bClass(t.c)}">${bLabel(t.c)}</span>
+      </div>`).join('')}
+    <div class="lg">
+      <div class="li"><span class="b bf2">Covered</span> Full depth</div>
+      <div class="li"><span class="b bp2">Partial</span> Lighter than cert needs</div>
+      <div class="li"><span class="b bt">Thin</span> Concepts only</div>
+      <div class="li"><span class="b bg">Gap</span> Not in scope</div>
+    </div>
+    <div class="vd" style="border-color:${c.vc}">${c.verdict}</div>`;
+};
+
+renderCards();
+selCert('crte');
+})();
+</script>
+</div>
+<!-- END BANNER -->
+
+---
+
 ## What This Skill Does
 
 When loaded, this skill guides Claude to answer AD pentesting questions with:
