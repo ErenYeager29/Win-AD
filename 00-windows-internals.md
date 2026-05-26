@@ -248,6 +248,4 @@ Don't move to Phase 01 until you can answer all of these **without looking**:
 
 ---
 
-## Next Phase
 
-→ **Phase 01: Red Team Infrastructure & OPSEC** — setting up the infrastructure that makes everything else possible
